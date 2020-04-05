@@ -25,9 +25,13 @@ class Model(nn.Module):
         #                  TODO : Forward path를 위한 Linear함수 또는 Weight 와 bias를 정의                           #
         ###############################################################################################################
         self.lin1 = nn.Linear(input_size, H1) # Affine layer(input size, output_size)
-        self.lin2 = nn.Linear(H1, output_size)
+        self.lin2 = nn.Linear(input_size, output_size)
+        # self.lin1 = nn.Linear(input_size, output_size) for layer 1
+        # self.lin2 = nn.Linear(H1, H1) for layer 4
         # self.lin3 = nn.Linear(H1, H1)
         # self.lin4 = nn.Linear(H1, output_size)
+
+        self.bn = nn.BatchNorm1d(H1)
         ###############################################################################################################
         #                                              END OF YOUR CODE                                               #
         ###############################################################################################################
@@ -40,16 +44,16 @@ class Model(nn.Module):
 
         # TODO 3. Linear - Linear - Linear - Linear - Sigmoid 의 구조를 가지는 Forward path를 수행하고 결과를 x에 저장#
         ###############################################################################################################
-        # x = F.sigmoid(self.lin1(x))
+        # x = torch.sigmoid(self.lin1(x))
 
-        x = F.sigmoid(self.lin1(x))
-        x = F.sigmoid(self.lin2(x))
+        x = torch.sigmoid(self.bn(self.lin1(x)))
+        x = torch.sigmoid(self.lin2(x))
 
         # x = self.lin1(x)
         # x = self.lin2(x)
         # x = self.lin3(x)
         # x = self.lin4(x)
-        # x = F.sigmoid(x)
+        # x = torch.sigmoid(x)
         ###############################################################################################################
         #                                              END OF YOUR CODE                                               #
         ###############################################################################################################
@@ -61,7 +65,7 @@ class Model(nn.Module):
 
     def loss(self, x, t):
         y = self.predict(x)
-        return self.
+        return self
 
 
 model = Model(2, 2, 1)
@@ -70,7 +74,8 @@ model = Model(2, 2, 1)
 #                  TODO : 손실함수(BCELoss)와 optimizer(Adam)를 정의(learning rate=0.01)                     #
 ##############################################################################################################
 BCELoss = nn.BCELoss()
-optimizer = optim.Adam(model.parameters(), lr = 0.01)
+# optimizer = torch.optim.Adam(model.parameters(), lr = 0.02) # for 1 and 2
+optimizer = torch.optim.Adam(model.parameters(), lr = 0.02)
 ###############################################################################################################
 #                                              END OF YOUR CODE                                               #
 ###############################################################################################################
@@ -85,7 +90,7 @@ for i in range(epochs):
     #                         TODO : foward path를 진행하고 손실을 loss에 저장                                   #
     #                               전체 data를 모두 보고 updata를 진행하는 Batch gradient descent(BGD)을 진행   #
     ##############################################################################################################
-    y_pred = Model.forward(X_data) # 
+    y_pred = model.forward(X_data) 
     loss = BCELoss(y_pred, y_data)
     ###############################################################################################################
     #                                              END OF YOUR CODE                                               #
