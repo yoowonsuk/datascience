@@ -149,7 +149,6 @@ if __name__ == '__main__':
             loss = criterion(outputs, label)
             del img # add something
             del outputs # add something
-            model.zero_grad()
             loss.backward()
             optimizer.step()
 
