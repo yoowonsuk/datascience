@@ -149,7 +149,6 @@ if __name__ == '__main__':
             loss = criterion(outputs, label)
             del img # add something
             del outputs # add something
-            model.zero_grad()
             loss.backward()
             optimizer.step()
 
@@ -160,8 +159,6 @@ if __name__ == '__main__':
             if global_steps >= 64000:
                 print("Training finished.")
                 break
-            if global_steps % 20 == 0:
-                break;
 
         ave_loss = train_loss / train_batch_cnt
         training_time = (time.time() - start_time) / 60
